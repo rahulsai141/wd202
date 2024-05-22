@@ -61,9 +61,9 @@ module.exports = todoList;
 
 // const todos = todoList();
 
-// const formattedDate = d => {
-//   return d.toISOString().split('T')[0];
-// };
+const formattedDate = d => {
+  return d.toISOString().split('T')[0];
+};
 
 // var dateToday = new Date();
 // const today = formattedDate(dateToday);
