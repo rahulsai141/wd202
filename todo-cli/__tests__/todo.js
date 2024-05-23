@@ -46,7 +46,7 @@ describe('First test suite', () => {
       title: 'Test todo',
       completed: false,
       dueDate: formattedDate(
-        new Date(new Date().setDate(dateToday.getDate() - 1))
+        new Date(new Date().setDate(new Date().getDate() - 1))
       ),
     });
     expect(overdue().length).toBe(overdueitems + 1);
@@ -58,7 +58,7 @@ describe('First test suite', () => {
       title: 'Test todo',
       completed: false,
       dueDate: formattedDate(
-        new Date(new Date().setDate(dateToday.getDate() + 1))
+        new Date(new Date().setDate(new Date().getDate() + 1))
       ),
     });
     expect(dueLater().length).toBe(duelateritems + 1);
