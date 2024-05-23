@@ -2,6 +2,10 @@ const datedifference = date => {
   return new Date(date) - new Date(formattedDate(new Date()));
 };
 
+const formattedDate = d => {
+  return d.toISOString().split('T')[0];
+};
+
 const todoList = () => {
   all = [];
   const add = todoItem => {
@@ -60,10 +64,6 @@ module.exports = todoList;
 // ####################################### #
 
 // const todos = todoList();
-
-// const formattedDate = d => {
-//   return d.toISOString().split('T')[0];
-// };
 
 // var dateToday = new Date();
 // const today = formattedDate(dateToday);
