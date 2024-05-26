@@ -122,6 +122,19 @@ module.exports = (sequelize, DataTypes) => {
       // FILL IN HERE TO RETURN ITEMS DUE LATER
     }
 
+    static async deleteTodoItem(id) {
+      try {
+        const deleteitem = await Todo.destroy({
+          where: {
+            id: id,
+          },
+        });
+        console.log(`Deleted row count Item ${deleteitem}`);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     static async markAsComplete(id) {
       try {
         return await Todo.update(
