@@ -33,7 +33,7 @@
 // };
 
 'use strict';
-const { Model } = require('sequelize');
+const { Model, Op } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Todo extends Model {
     /**
@@ -50,26 +50,27 @@ module.exports = (sequelize, DataTypes) => {
       console.log('Overdue');
 
       const overdueTodos = await Todo.overdue();
-      console
-        .log(overdueTodos.map(todo => todo.displayableString()))
-        .join('\n');
+      console.log(
+        overdueTodos.map(todo => todo.displayableString()).join('\n')
+      );
 
       // FILL IN HERE
       console.log('\n');
 
       console.log('Due Today');
       const dueTodayTodos = await Todo.dueToday();
-      console
-        .log(dueTodayTodos.map(todo => todo.displayableString()))
-        .join('\n');
+      console.log(
+        dueTodayTodos.map(todo => todo.displayableString()).join('\n')
+      );
+
       // FILL IN HERE
       console.log('\n');
 
       console.log('Due Later');
       const dueLaterTodos = await Todo.dueLater();
-      console
-        .log(dueLaterTodos.map(todo => todo.displayableString()))
-        .join('\n');
+      console.log(
+        dueLaterTodos.map(todo => todo.displayableString()).join('\n')
+      );
       // FILL IN HERE
     }
 
@@ -122,6 +123,21 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static async markAsComplete(id) {
+      try {
+        return await Todo.update(
+          {
+            completed: true,
+          },
+          {
+            where: {
+              completed: false,
+              id: id,
+            },
+          }
+        );
+      } catch (error) {
+        console.log(error);
+      }
       // FILL IN HERE TO MARK AN ITEM AS COMPLETE
     }
 
