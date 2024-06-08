@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       return this.create({ title: title, dueDate: dueDate, completed: false });
     }
 
-    static getAllTodos() {
+    static getTodos() {
       return this.findAll();
     }
 
