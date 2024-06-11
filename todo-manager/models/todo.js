@@ -24,6 +24,53 @@ module.exports = (sequelize, DataTypes) => {
     deletetodo() {
       return this.destroy();
     }
+    static async overdue() {
+      //select * from Todo where todays date>overdue
+      try {
+        return await Todo.findAll({
+          where: {
+            dueDate: {
+              [Op.lt]: new Date(),
+            },
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      // FILL IN HERE TO RETURN OVERDUE ITEMS
+    }
+
+    static async dueToday() {
+      //select * from Todo where todsya date is equal to dueDate
+
+      try {
+        return await Todo.findAll({
+          where: {
+            dueDate: {
+              [Op.eq]: new Date(),
+            },
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      // FILL IN HERE TO RETURN ITEMS DUE tODAY
+    }
+
+    static async dueLater() {
+      try {
+        return await Todo.findAll({
+          where: {
+            dueDate: {
+              [Op.gt]: new Date(),
+            },
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      // FILL IN HERE TO RETURN ITEMS DUE LATER
+    }
   }
 
   Todo.init(
