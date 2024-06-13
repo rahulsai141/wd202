@@ -1,13 +1,15 @@
+<link href='./css/styles.css' rel="stylesheet">
 <div>
     <div class="flex items-center">
         <h5 class="font-bold text-black">Over Due</h5>
-        <p class="ml-2 bg-gray-100 w-5 h-6 "><%= overDueTodos.length %></p>
+        <p class="ml-2 bg-gray-100 w-5 h-6 pl-2 pr-3"><%= overDueTodos.length %></p>
+        <!-- <p class="oc"><%= overDueTodos.length %></p> -->
         
     </div>
     
     <ul class="list-none">
         <li class="Todo-Item">
-            <div class="flex items-center w-fit my-2 px-2 py-1 rounded hover:bg-purple-50">
+            <div class="flex items-center w-fit my-2 px-2 py-1 rounded">
                 <table >
                     
                     <% for(var i=0;i<overDueTodos.length;i++){%>
@@ -54,12 +56,12 @@
     </ul>
     <div class="flex items-center">
         <h5 class="font-bold text-black">Due Today</h5>
-        <p class="ml-2 bg-gray-100 w-5 h-6 "><%= dueDateTodos.length %></p>
+        <p class="ml-2 bg-gray-100 w-5 h-6 pl-2 "><%= dueDateTodos.length %></p>
     </div>
     
     <ul class="list-none">
         <li class="Todo-Item">
-            <div class="flex items-center w-fit my-2 px-2 py-1 rounded hover:bg-purple-50">
+            <div class="flex items-center w-fit my-2 px-2 py-1 rounded">
                 
                 <!-- <label for="todo-checkbox-1" class="ml-2 text-sm text-gray-600 cursor-pointer">Have to Pay electicity Bill</label> -->
                 
@@ -112,13 +114,13 @@
 
     <div class="flex items-center">
         <h5 class="font-bold text-black">Due Later</h5>
-        <p class="ml-2 bg-gray-100 w-5 h-6 "><%= dueLaterTodos.length %></p>
+        <p class="ml-2 bg-gray-100 w-5 h-6 pl-2"><%= dueLaterTodos.length %></p>
     </div>
     
 
     <ul class="list-none">
         <li class="Todo-Item">
-            <div class="flex items-center w-fit my-2 px-2 py-1 rounded hover:bg-purple-50">
+            <div class="flex items-center w-fit my-2 px-2 py-1 rounded">
                 <!-- <label for="todo-checkbox-1" class="ml-2 text-sm text-gray-600 cursor-pointer">Have to Pay electicity Bill</label> -->
 
                 <table >
