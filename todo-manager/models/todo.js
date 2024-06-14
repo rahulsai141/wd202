@@ -25,6 +25,14 @@ module.exports = (sequelize, DataTypes) => {
     deletetodo() {
       return this.destroy();
     }
+
+    static async remove(id) {
+      return this.destroy({
+        where: {
+          id: id,
+        },
+      });
+    }
     static async overdue() {
       //select * from Todo where todays date>overdue
       try {
