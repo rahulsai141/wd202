@@ -26,11 +26,20 @@
             </form>
 
             
+            
             <%- include('todos.ejs', {
-                allTodos: allTodos,
-                overDueTodos: overDueTodos,
-                dueDateTodos: dueDateTodos,
-                dueLaterTodos: dueLaterTodos
+                title:"OverDue",
+                data: overDueTodos,
+                
+            }) %>
+            <%- include('todos.ejs', {
+                title:"Due Today",
+                data: dueDateTodos,
+                
+            }) %>
+            <%- include('todos.ejs', {
+                title:"Due Later",
+                data: dueLaterTodos
             }) %>
 
         </div>    
