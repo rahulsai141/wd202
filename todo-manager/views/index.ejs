@@ -12,11 +12,14 @@
             .getAttribute("content");
         function updateTodo(id)
         {
+            const checkbox=document.getElementById(`todo-checkbox-${id}`);
+            const isChecked=checkbox.checked;
             fetch(`/todos/${id}/markAsCompleted`,{
                 method:"put",
                 headers:{"Content-Type":"application/json"},
                 body:JSON.stringify({
-                    "_csrf":token
+                    "_csrf":token,
+                    "completed":isChecked
                 })
             })
             .then((res)=>{
@@ -27,7 +30,8 @@
             .catch((err)=>console.error(err));
         }
 
-        function deleteTodo(id){
+        function deleteTodo(id)
+        {
             fetch(`/todos/${id}`,{
                 method:"delete",
                 headers:{"Content-Type": "application/json"},
@@ -42,6 +46,8 @@
             })
             .catch((err)=>console.error(err));
         }
+        
+
     </script>
     <title>Todo-manager</title> 
 </head>
@@ -56,7 +62,7 @@
                         <input type="text" name="title" placeholder="What's next?" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm" required/>
                     </div>
                     <div class="flex-auto">
-                        <input type="date" name="dueDate" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4"/>
+                        <input type="date" name="dueDate" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4" required/>
                     </div>
                     <div class="flex-none">
                         <button type="submit" class="bg-green-600 text-white px-5 py-1.5 rounded font-medium mr-2 mb-2">Add</button>
