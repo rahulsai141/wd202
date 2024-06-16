@@ -12,6 +12,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser('shh! some secret string'));
 app.use(csrf({ cookie: true }));
+//app.use(csrf('this_should_be_32_characters_long', ['POST', 'PUT', 'DELETE']));
 
 app.set('view engine', 'ejs');
 
@@ -74,7 +75,8 @@ app.put('/todos/:id/markAsCompleted', async (request, response) => {
   console.log('We have to update a todo with id:', request.params.id);
   const todo = await Todo.findByPk(request.params.id);
   try {
-    const updatedTodo = await todo.markAsCompleted();
+    //const updatedTodo = await todo.markAsCompleted();
+    const updatedTodo = await todo.setCompletionStatus(request.body.completed);
     return response.json(updatedTodo);
   } catch (error) {
     console.log(error);
