@@ -21,6 +21,7 @@ app.get('/', async (request, response) => {
   const overDueTodos = await Todo.overdue();
   const dueDateTodos = await Todo.dueToday();
   const dueLaterTodos = await Todo.dueLater();
+  const completedTodos = await Todo.completedTodos();
 
   if (request.accepts('html')) {
     response.render('index', {
@@ -28,6 +29,7 @@ app.get('/', async (request, response) => {
       overDueTodos,
       dueDateTodos,
       dueLaterTodos,
+      completedTodos,
       csrfToken: request.csrfToken(),
     });
   } else {
@@ -36,6 +38,7 @@ app.get('/', async (request, response) => {
       overDueTodos,
       dueDateTodos,
       dueLaterTodos,
+      completedTodos,
     });
   }
 });
@@ -71,7 +74,7 @@ app.post('/todos', async (request, response) => {
   }
 });
 
-app.put('/todos/:id/markAsCompleted', async (request, response) => {
+app.put('/todos/:id', async (request, response) => {
   console.log('We have to update a todo with id:', request.params.id);
   const todo = await Todo.findByPk(request.params.id);
   try {
