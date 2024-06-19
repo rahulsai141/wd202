@@ -45,6 +45,7 @@ module.exports = (sequelize, DataTypes) => {
             dueDate: {
               [Op.lt]: new Date(),
             },
+            completed: false,
           },
         });
       } catch (error) {
@@ -62,6 +63,7 @@ module.exports = (sequelize, DataTypes) => {
             dueDate: {
               [Op.eq]: new Date(),
             },
+            completed: false,
           },
         });
       } catch (error) {
@@ -77,12 +79,25 @@ module.exports = (sequelize, DataTypes) => {
             dueDate: {
               [Op.gt]: new Date(),
             },
+            completed: false,
           },
         });
       } catch (error) {
         console.log(error);
       }
       // FILL IN HERE TO RETURN ITEMS DUE LATER
+    }
+
+    static async completedTodos() {
+      try {
+        return await Todo.findAll({
+          where: {
+            completed: true,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
