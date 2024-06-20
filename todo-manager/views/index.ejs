@@ -10,11 +10,11 @@
         var token=document
             .querySelector('meta[name="csrf-token"]')
             .getAttribute("content");
-        function updateTodo(id)
+        function updateTodo(id,isChecked)
         {
             const checkbox=document.getElementById(`todo-checkbox-${id}`);
-            const isChecked=checkbox.checked;
-            fetch(`/todos/${id}/markAsCompleted`,{
+            //const isChecked=checkbox.checked;
+            fetch(`/todos/${id}`,{
                 method:"put",
                 headers:{"Content-Type":"application/json"},
                 body:JSON.stringify({
@@ -75,16 +75,24 @@
             <%- include('todos.ejs', {
                 title:"OverDue",
                 data: overDueTodos,
-                
+                id:"count-overdue"
             }) %>
             <%- include('todos.ejs', {
                 title:"Due Today",
                 data: dueDateTodos,
+                id:"count-due-today"
                 
             }) %>
             <%- include('todos.ejs', {
                 title:"Due Later",
-                data: dueLaterTodos
+                data: dueLaterTodos,
+                id:"count-due-later"
+            }) %>
+
+            <%- include('todos.ejs', {
+                title:"Completed Todos",
+                data: completedTodos,
+                id:"count-complted-todos"
             }) %>
 
         </div>    
