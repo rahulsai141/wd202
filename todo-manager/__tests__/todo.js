@@ -159,8 +159,11 @@ describe('Todo Application', function () {
       .send({ _csrf: csrfToken });
     const UpdatedParsedResponse = JSON.parse(deleteItem.text);
     expect(UpdatedParsedResponse).toBe(true);
-    // const deleteItem1 = await agent.delete(`/todos/${todoID}`);
-    // const UpdatedParsedResponse1 = JSON.parse(deleteItem1.text);
-    // expect(UpdatedParsedResponse1).toBe(false);
+
+    const deleteItem1 = await agent
+      .delete(`/todos/${todoID}`)
+      .send({ _csrf: csrfToken });
+    const UpdatedParsedResponse1 = JSON.parse(deleteItem1.text);
+    expect(UpdatedParsedResponse1).toBe(false);
   });
 });
