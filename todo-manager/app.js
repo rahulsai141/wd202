@@ -90,25 +90,25 @@ app.put('/todos/:id', async (request, response) => {
 app.delete('/todos/:id', async (request, response) => {
   console.log('We are Deleting an id based on the id: ', request.params.id);
   const todo = await Todo.findByPk(request.params.id);
-  // try {
-  //   if (todo === null) {
-  //     return response.json(false);
-  //   } else {
-  //     const deletedTodo = await todo.deletetodo();
-  //     return response.json(true);
-  //   }
-  // } catch (error) {
-  //   return response.status(422).json(error);
-  // }
-  //response;
-
   try {
-    await Todo.remove(request.params.id);
-    //return response.json({ success: true });
-    return response.json(true);
+    if (todo === null) {
+      return response.json(false);
+    } else {
+      const deletedTodo = await todo.deletetodo();
+      return response.json(true);
+    }
   } catch (error) {
     return response.status(422).json(error);
   }
+  //response;
+
+  // try {
+  //   await Todo.remove(request.params.id);
+  //   //return response.json({ success: true });
+  //   return response.json(true);
+  // } catch (error) {
+  //   return response.status(422).json(error);
+  // }
 });
 
 module.exports = app;
