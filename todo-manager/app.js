@@ -1,15 +1,15 @@
 const express = require('express');
-var csrf = require('csurf');
+var csrf = require('tiny-csrf');
 const path = require('path');
 const app = express();
 
 const bodyParser = require('body-parser');
-
+const bcrypt = require('bcrypt');
 const passport = require('passport');
 const connectEnsureLogin = require('connect-ensure-login');
-const session = require('passport-local');
+const session = require('express-session');
 const LocalStrategy = require('passport-local');
-
+const saltRounds = 10;
 app.use(bodyParser.json());
 
 var cookieParser = require('cookie-parser');
@@ -17,8 +17,8 @@ var cookieParser = require('cookie-parser');
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser('shh! some secret string'));
-app.use(csrf({ cookie: true }));
-//app.use(csrf('this_should_be_32_characters_long', ['POST', 'PUT', 'DELETE']));
+//app.use(csrf({ cookie: true }));
+app.use(csrf('qwertyuiopasdfghjklszxcvbnmqwert', ['POST', 'PUT', 'DELETE']));
 
 app.use(
   session({
@@ -40,8 +40,13 @@ passport.use(
     },
     (username, password, done) => {
       User.findOne({ where: { email: username, password: password } })
-        .then(user => {
-          return done(null, user);
+        .then(async user => {
+          const result = await bcrypt.compare(password, user.password);
+          if (result) {
+            return done(null, user);
+          } else {
+            return done('Invalid User');
+          }
         })
         .catch(error => {
           return error;
@@ -55,7 +60,7 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
-passport.deserializeUser((user, done) => {
+passport.deserializeUser((id, done) => {
   User.findByPk(id)
     .then(user => {
       done(null, user);
@@ -76,32 +81,36 @@ app.get('/', async (request, response) => {
   });
 });
 
-app.get('/todos', async (request, response) => {
-  const allTodos = await Todo.getTodos();
-  const overDueTodos = await Todo.overdue();
-  const dueDateTodos = await Todo.dueToday();
-  const dueLaterTodos = await Todo.dueLater();
-  const completedTodos = await Todo.completedTodos();
+app.get(
+  '/todos',
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const allTodos = await Todo.getTodos();
+    const overDueTodos = await Todo.overdue();
+    const dueDateTodos = await Todo.dueToday();
+    const dueLaterTodos = await Todo.dueLater();
+    const completedTodos = await Todo.completedTodos();
 
-  if (request.accepts('html')) {
-    response.render('todo', {
-      allTodos,
-      overDueTodos,
-      dueDateTodos,
-      dueLaterTodos,
-      completedTodos,
-      csrfToken: request.csrfToken(),
-    });
-  } else {
-    response.json({
-      allTodos,
-      overDueTodos,
-      dueDateTodos,
-      dueLaterTodos,
-      completedTodos,
-    });
+    if (request.accepts('html')) {
+      response.render('todo', {
+        allTodos,
+        overDueTodos,
+        dueDateTodos,
+        dueLaterTodos,
+        completedTodos,
+        csrfToken: request.csrfToken(),
+      });
+    } else {
+      response.json({
+        allTodos,
+        overDueTodos,
+        dueDateTodos,
+        dueLaterTodos,
+        completedTodos,
+      });
+    }
   }
-});
+);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -125,9 +134,26 @@ app.get('/signup', (request, response) => {
   });
 });
 
+app.get('/login', (request, response) => {
+  response.render('login', {
+    title: 'Login',
+    csrfToken: request.csrfToken(),
+  });
+});
+
+app.post(
+  '/session',
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  (request, response) => {
+    console.log(request.user);
+    response.redirect('/todos');
+  }
+);
+
 app.post('/users', async (request, response) => {
   //console.log('firstname', request.body.FirstName);
-
+  const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
+  console.log(hashedPwd);
   try {
     const user = await User.create({
       FirstName: request.body.FirstName,
@@ -135,7 +161,12 @@ app.post('/users', async (request, response) => {
       email: request.body.email,
       password: request.body.passowrd,
     });
-    response.redirect('/');
+    request.login(user, err => {
+      if (err) {
+        console.log(err);
+      }
+      response.redirect('/todos');
+    });
   } catch (error) {
     console.log(error);
   }
