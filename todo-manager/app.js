@@ -39,7 +39,7 @@ passport.use(
       passwordField: 'password',
     },
     (username, password, done) => {
-      User.findOne({ where: { email: username, password: password } })
+      User.findOne({ where: { email: username } })
         .then(async user => {
           const result = await bcrypt.compare(password, user.password);
           if (result) {
@@ -145,7 +145,9 @@ app.post(
   '/session',
   passport.authenticate('local', { failureRedirect: '/login' }),
   (request, response) => {
+    console.log('fail');
     console.log(request.user);
+    console.log('False');
     response.redirect('/todos');
   }
 );
