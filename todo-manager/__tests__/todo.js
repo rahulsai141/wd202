@@ -60,8 +60,21 @@ describe('Todo Application', function () {
     }
   });
 
+  test('Sign Up', async () => {
+    let res = await agent.get('/signup');
+    const csrfToken = extractCsrfToken(res);
+    res = await agent.post('/users').send({
+      firstName: 'Test',
+      lastname: 'User A',
+      email: 'user.a@test.com',
+      password: '12345678',
+      _csrf: csrfToken,
+    });
+    expect(res.statusCode).toBe(302);
+  });
+
   test('Creates a todo and responds with json at /todos POST endpoint', async () => {
-    const res = await agent.get('/');
+    const res = await agent.get('/todos');
     const csrfToken = extractCsrfToken(res);
     const response = await agent.post('/todos').send({
       title: 'Buy milk',
@@ -78,7 +91,7 @@ describe('Todo Application', function () {
   });
 
   test('Marks a todo with the given ID as complete', async () => {
-    let res = await agent.get('/');
+    let res = await agent.get('/todos');
     let csrfToken = extractCsrfToken(res);
     await agent.post('/todos').send({
       title: 'Buy milk',
@@ -88,13 +101,13 @@ describe('Todo Application', function () {
     });
 
     const groupedTodosResponse = await agent
-      .get('/')
+      .get('/todos')
       .set('Accept', 'application/json');
     const parsedGroupedResponse = JSON.parse(groupedTodosResponse.text);
     const dueTodayCount = parsedGroupedResponse.dueDateTodos.length;
     const latestTodo = parsedGroupedResponse.dueDateTodos[dueTodayCount - 1];
 
-    res = await agent.get('/');
+    res = await agent.get('/todos');
     csrfToken = extractCsrfToken(res);
 
     const markCompleteResponse = await agent
@@ -117,7 +130,7 @@ describe('Todo Application', function () {
   test('Fetches all todos in the database using /todos endpoint', async () => {
     let response = await agent.get('/todos');
     const parsedResponsebefore = JSON.parse(response.text);
-    let res = await agent.get('/');
+    let res = await agent.get('/todos');
     let csrfToken = extractCsrfToken(res);
     await agent.post('/todos').send({
       title: 'Buy xbox',
@@ -141,7 +154,7 @@ describe('Todo Application', function () {
   });
 
   test('Deletes a todo with the given ID if it exists and sends a boolean response', async () => {
-    let res = await agent.get('/');
+    let res = await agent.get('/todos');
     let csrfToken = extractCsrfToken(res);
     await agent.post('/todos').send({
       title: 'Buy box',
