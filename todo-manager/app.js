@@ -95,7 +95,6 @@ app.get(
 
     if (request.accepts('html')) {
       response.render('todo', {
-        allTodos,
         overDueTodos,
         dueDateTodos,
         dueLaterTodos,
@@ -104,7 +103,6 @@ app.get(
       });
     } else {
       response.json({
-        allTodos,
         overDueTodos,
         dueDateTodos,
         dueLaterTodos,
