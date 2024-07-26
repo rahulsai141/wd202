@@ -2,13 +2,18 @@ const express = require('express');
 var csrf = require('tiny-csrf');
 const path = require('path');
 const app = express();
-
+const flash = require('connect-flash');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const connectEnsureLogin = require('connect-ensure-login');
 const session = require('express-session');
 const LocalStrategy = require('passport-local');
+
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(flash());
+
 const saltRounds = 10;
 app.use(bodyParser.json());
 
@@ -33,6 +38,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function (request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
+
 passport.use(
   new LocalStrategy(
     {
@@ -46,7 +56,7 @@ passport.use(
           if (result) {
             return done(null, user);
           } else {
-            return done('Invalid User');
+            return done(null, false, { message: 'Invalid password' });
           }
         })
         .catch(error => {
@@ -152,13 +162,25 @@ app.get('/login', (request, response) => {
   });
 });
 
+// app.post(
+//   '/session',
+//   passport.authenticate('local', { failureRedirect: '/login' }),
+//   (request, response) => {
+//     console.log('fail');
+//     console.log(request.user);
+//     console.log('False');
+//     response.redirect('/todos');
+//   }
+// );
+
 app.post(
   '/session',
-  passport.authenticate('local', { failureRedirect: '/login' }),
-  (request, response) => {
-    console.log('fail');
+  passport.authenticate('local', {
+    failureRedirect: '/login',
+    failureFlash: true,
+  }),
+  function (request, response) {
     console.log(request.user);
-    console.log('False');
     response.redirect('/todos');
   }
 );
@@ -174,6 +196,7 @@ app.post('/users', async (request, response) => {
       email: request.body.email,
       password: hashedPwd,
     });
+
     request.login(user, err => {
       if (err) {
         console.log(err);
@@ -189,7 +212,7 @@ app.post(
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
     //response.send('Create a Todo', request.body);
-
+    request.flash('success', 'To-do created successfully.');
     try {
       await Todo.addTodo({
         title: request.body.title,
@@ -197,10 +220,17 @@ app.post(
         userId: request.user.id,
       });
       //return response.json(todo);
+      request.flash('success', 'To-do created successfully.');
       return response.redirect('/todos');
     } catch (error) {
-      console.log(error);
-      return response.status(422).json(error);
+      // console.log(error);
+      // return response.status(422).json(error);
+      if (error.name === 'SequelizeValidationError') {
+        error.errors.forEach(err => request.flash('error', err.message));
+      } else {
+        request.flash('error', 'An error occurred. Please try again.');
+      }
+      response.redirect('/todos');
     }
   }
 );

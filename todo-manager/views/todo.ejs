@@ -56,6 +56,11 @@
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
             <a href="/signout">Signout</a>
+
+            
+            
+
+
             <form action="/todos" method="post">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
                 <div class="flex gap-2 py-4">
@@ -71,7 +76,11 @@
                 </div>    
             </form>
 
-            
+            <% if(messages && messages.error && messages.error.length > 0)  { %>
+                <% for(var i=0; i<messages.error.length; i++) { %>
+                        <li> <%= messages.error[i] %></li>
+                <% } %>
+              <% } %>
             
             <%- include('todos.ejs', {
                 title:"OverDue",
